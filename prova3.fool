@@ -1,0 +1,4 @@
+let 
+  fun f:int (i:int, j:int) i+j;
+in
+  print (f(3,5));
