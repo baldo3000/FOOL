@@ -1,15 +1,18 @@
 package compiler;
 
-import java.util.*;
-
+import compiler.AST.*;
+import compiler.FOOLParser.*;
+import compiler.lib.DecNode;
+import compiler.lib.Node;
+import compiler.lib.TypeNode;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import compiler.AST.*;
-import compiler.FOOLParser.*;
-import compiler.lib.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import static compiler.lib.FOOLlib.*;
+import static compiler.lib.FOOLlib.extractCtxName;
+import static compiler.lib.FOOLlib.lowerizeFirstChar;
 
 public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 
@@ -59,6 +62,19 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     public Node visitNoDecProg(NoDecProgContext c) {
         if (print) printVarAndProdName(c);
         return new ProgNode(visit(c.exp()));
+    }
+
+    // TODO: add code
+    @Override
+    public Node visitNot(NotContext c) {
+        if (print) printVarAndProdName(c);
+        return null;
+    }
+
+    // TODO: add code
+    @Override
+    public Node visitAndOr(AndOrContext c) {
+        return null;
     }
 
     // TODO: provided version is for Times only, add code for Div, see lab06 CalcSTVisititor to know how to differentiate operators
@@ -188,5 +204,65 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         Node n = new CallNode(c.ID().getText(), arglist);
         n.setLine(c.ID().getSymbol().getLine());
         return n;
+    }
+
+    @Override
+    public Node visitCldec(CldecContext c) {
+        if (print) printVarAndProdName(c);
+        List<FieldNode> fields = new ArrayList<>();
+        for (int i = 1; i < c.ID().size(); i++) {
+            FieldNode f = new FieldNode(c.ID(i).getText(), (TypeNode) visit(c.type(i)));
+            f.setLine(c.ID(i).getSymbol().getLine());
+            fields.add(f);
+        }
+        List<MethodNode> methods = new ArrayList<>();
+        for (int i = 0; i < c.methdec().size(); i++) {
+            MethodNode m = (MethodNode) visit(c.methdec(i));
+            m.setLine(c.methdec(i).ID(0).getSymbol().getLine());
+            methods.add(m);
+        }
+        Node n = null;
+        if (!c.ID().isEmpty()) {
+            n = new ClassNode(c.ID(0).getText(), new ClassTypeNode(), fields, methods);
+            n.setLine(c.CLASS().getSymbol().getLine());
+        }
+        return n;
+    }
+
+    @Override
+    public Node visitMethdec(MethdecContext c) {
+        if (print) printVarAndProdName(c);
+        List<ParNode> parList = new ArrayList<>();
+        for (int i = 1; i < c.ID().size(); i++) {
+            ParNode p = new ParNode(c.ID(i).getText(), (TypeNode) visit(c.type(i)));
+            p.setLine(c.ID(i).getSymbol().getLine());
+            parList.add(p);
+        }
+        List<DecNode> decList = new ArrayList<>();
+        for (DecContext dec : c.dec()) decList.add((DecNode) visit(dec));
+        Node n = null;
+        if (!c.ID().isEmpty()) { //non-incomplete ST
+            n = new MethodNode(c.ID(0).getText(), (TypeNode) visit(c.type(0)), parList, decList, visit(c.exp()));
+            n.setLine(c.FUN().getSymbol().getLine());
+        }
+        return n;
+    }
+
+    @Override
+    public Node visitNull(NullContext c) {
+        if (print) printVarAndProdName(c);
+        return null;
+    }
+
+    @Override
+    public Node visitNew(NewContext c) {
+        if (print) printVarAndProdName(c);
+        return null;
+    }
+
+    @Override
+    public Node visitDotCall(DotCallContext c) {
+        if (print) printVarAndProdName(c);
+        return null;
     }
 }

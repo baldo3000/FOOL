@@ -327,14 +327,12 @@ public class AST {
         final List<FieldNode> fields;
         final List<MethodNode> methods;
         final String id;
-        final Node exp;
 
-        ClassNode(String i, TypeNode t, Node e) {
-            fields = new ArrayList<>();
-            methods = new ArrayList<>();
+        ClassNode(String i, TypeNode t, List<FieldNode> f, List<MethodNode> m) {
             id = i;
-            exp = e;
             type = t;
+            fields = Collections.unmodifiableList(f);
+            methods = Collections.unmodifiableList(m);
         }
 
         @Override
