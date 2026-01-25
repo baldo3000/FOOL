@@ -377,15 +377,15 @@ public class AST {
     }
 
     public static class ClassCallNode extends Node {
-        final String classId;
+        final String objId;
         final String methodId;
         final List<Node> arglist;
         STentry entry;
         STentry methodEntry;
         int nl;
 
-        ClassCallNode(String ci, String mi, List<Node> p) {
-            classId = ci;
+        ClassCallNode(String oi, String mi, List<Node> p) {
+            objId = oi;
             methodId = mi;
             arglist = Collections.unmodifiableList(p);
         }
