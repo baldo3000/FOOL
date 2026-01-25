@@ -1,9 +1,10 @@
 package compiler.lib;
 
 import compiler.AST.*;
-import compiler.exc.*;
+import compiler.exc.IncomplException;
+import compiler.exc.UnimplException;
 
-import static compiler.lib.FOOLlib.*;
+import static compiler.lib.FOOLlib.extractNodeName;
 
 public class BaseASTVisitor<S, E extends Exception> {
 
