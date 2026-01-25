@@ -1,8 +1,12 @@
 package compiler;
 
-import java.util.*;
+import compiler.lib.BaseASTVisitor;
+import compiler.lib.DecNode;
+import compiler.lib.Node;
+import compiler.lib.TypeNode;
 
-import compiler.lib.*;
+import java.util.Collections;
+import java.util.List;
 
 public class AST {
 
@@ -251,4 +255,70 @@ public class AST {
         }
     }
 
+    // OPERATOR EXTENSION
+
+    // TODO: complete
+    public static class GreaterEqualNode extends Node {
+
+        @Override
+        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+            return null;
+        }
+    }
+
+    // TODO: complete
+    public static class LessEqualNode extends Node {
+
+        @Override
+        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+            return null;
+        }
+    }
+
+    // TODO: complete
+    public static class NotNode extends Node {
+
+        @Override
+        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+            return null;
+        }
+    }
+
+    // TODO: complete
+    public static class MinusNode extends Node {
+
+        @Override
+        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+            return null;
+        }
+    }
+
+    // TODO: complete
+    public static class OrNode extends Node {
+
+        @Override
+        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+            return null;
+        }
+    }
+
+    // TODO: complete
+    public static class DivNode extends Node {
+
+        @Override
+        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+            return null;
+        }
+    }
+
+    // TODO: complete
+    public static class AndNode extends Node {
+
+        @Override
+        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+            return null;
+        }
+    }
+
+    // OBJECT-ORIENTED EXTENSION
 }

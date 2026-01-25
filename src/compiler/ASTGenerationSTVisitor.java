@@ -61,7 +61,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         return new ProgNode(visit(c.exp()));
     }
 
-    // TODO: provided version is for Times only, add code for Div
+    // TODO: provided version is for Times only, add code for Div, see lab06 CalcSTVisititor to know how to differentiate operators
     @Override
     public Node visitTimesDiv(TimesDivContext c) {
         if (print) printVarAndProdName(c);
@@ -70,7 +70,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         return n;
     }
 
-    // TODO: provided version is for Plus only, add code for Minus
+    // TODO: provided version is for Plus only, add code for Minus, see lab06 CalcSTVisititor to know how to differentiate operators
     @Override
     public Node visitPlusMinus(PlusMinusContext c) {
         if (print) printVarAndProdName(c);
@@ -79,7 +79,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         return n;
     }
 
-    // TODO: provided version is for Eq, add code for Ge and Le
+    // TODO: provided version is for Eq only , add code for Ge and Le, see lab06 CalcSTVisititor to know how to differentiate operators
     @Override
     public Node visitComp(CompContext c) {
         if (print) printVarAndProdName(c);
