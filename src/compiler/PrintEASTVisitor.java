@@ -83,7 +83,23 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void, VoidException> {
     }
 
     @Override
+    public Void visitNode(DivNode n) {
+        printNode(n);
+        visit(n.left);
+        visit(n.right);
+        return null;
+    }
+
+    @Override
     public Void visitNode(PlusNode n) {
+        printNode(n);
+        visit(n.left);
+        visit(n.right);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(MinusNode n) {
         printNode(n);
         visit(n.left);
         visit(n.right);
@@ -138,11 +154,121 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void, VoidException> {
     }
 
     @Override
+    public Void visitNode(AndNode n) {
+        printNode(n);
+        visit(n.left);
+        visit(n.right);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(OrNode n) {
+        printNode(n);
+        visit(n.left);
+        visit(n.right);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(GreaterEqualNode n) {
+        printNode(n);
+        visit(n.left);
+        visit(n.right);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(LessEqualNode n) {
+        printNode(n);
+        visit(n.left);
+        visit(n.right);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(NotNode n) {
+        printNode(n);
+        visit(n.node);
+        return null;
+    }
+
+    @Override
     public Void visitSTentry(STentry entry) {
         printSTentry("nestlev " + entry.nl);
         printSTentry("type");
         visit(entry.type);
         printSTentry("offset " + entry.offset);
+        return null;
+    }
+
+    // OBJECT-ORIENTED EXTENSION
+
+    @Override
+    public Void visitNode(ClassNode n) {
+        printNode(n, n.id);
+        visit(n.getType());
+        for (FieldNode field : n.fields) visit(field);
+        for (MethodNode method : n.methods) visit(method);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(FieldNode n) {
+        printNode(n, n.id);
+        visit(n.getType());
+        return null;
+    }
+
+    @Override
+    public Void visitNode(MethodNode n) {
+        printNode(n, n.id);
+        visit(n.retType);
+        for (ParNode par : n.parlist) visit(par);
+        for (Node dec : n.declist) visit(dec);
+        visit(n.exp);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(ClassCallNode n) {
+        printNode(n, n.objId + "." + n.methodId + " at nesting level " + n.nl);
+        visit(n.entry);
+        visit(n.methodEntry);
+        for (Node arg : n.arglist) visit(arg);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(NewNode n) {
+        printNode(n, n.id + " at nesting level " + n.nl);
+        visit(n.entry);
+        for (Node arg : n.arglist) visit(arg);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(ClassTypeNode n) {
+        printNode(n);
+        for (TypeNode type : n.allFields) visit(type);
+        for (ArrowTypeNode arrowType : n.allMethods) visit(arrowType);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(RefTypeNode n) {
+        printNode(n, n.id);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(EmptyNode n) {
+        printNode(n);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(EmptyTypeNode n) {
+        printNode(n);
         return null;
     }
 
