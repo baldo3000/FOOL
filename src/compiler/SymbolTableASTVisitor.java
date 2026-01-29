@@ -3,6 +3,7 @@ package compiler;
 import compiler.AST.*;
 import compiler.exc.VoidException;
 import compiler.lib.BaseASTVisitor;
+import compiler.lib.DecNode;
 import compiler.lib.Node;
 import compiler.lib.TypeNode;
 
@@ -16,6 +17,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     private final List<Map<String, STentry>> symTable = new ArrayList<>();
     private int nestingLevel = 0; // current nesting level
     private int decOffset = -2; // counter for offset of local declarations at current nesting level
+    private int classOffset = -2;
+    Map<String, Map<String, STentry>> classTable = new HashMap<>();
     int stErrors = 0;
 
     SymbolTableASTVisitor() {
@@ -163,6 +166,106 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         } else {
             n.entry = entry;
             n.nl = nestingLevel;
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitNode(ClassNode n) {
+        if (print) printNode(n);
+        ClassTypeNode type = new ClassTypeNode();
+        STentry entry = new STentry(nestingLevel, type, classOffset--);
+        if (nestingLevel != 0) {
+            System.out.println("Class id " + n.id + " at line " + n.getLine() + " must be declared at nesting level 0");
+            stErrors++;
+        }
+        Map<String, STentry> hm = symTable.get(nestingLevel);
+        if (hm.put(n.id, entry) != null) {
+            System.out.println("Class " + n.id + " at line " + n.getLine() + " already declared");
+            stErrors++;
+        }
+
+        Map<String, STentry> virtualTable = new HashMap<>();
+
+        nestingLevel++;
+        symTable.add(virtualTable);
+        int fieldOffset = -1;
+        int methodOffset = 0;
+
+        for (FieldNode field : n.fields) {
+            // TODO: forse qui va messo field.offset = fieldOffset;
+            if (virtualTable.put(field.id, new STentry(nestingLevel, n.getType(), fieldOffset)) != null) {
+                System.out.println("Field " + n.id + " at line " + n.getLine() + " already declared");
+                stErrors++;
+            }
+            type.allFields.set(-fieldOffset - 1, field.getType());
+            fieldOffset--;
+        }
+
+        for (MethodNode method : n.methods) {
+            ArrowTypeNode a = new ArrowTypeNode(method.parlist.stream().map(DecNode::getType).toList(), method.retType);
+            method.offset = methodOffset; // TODO: non si sa a cosa serva
+            if (virtualTable.put(method.id, new STentry(nestingLevel, a, methodOffset)) != null) {
+                System.out.println("Method " + n.id + " at line " + n.getLine() + " already declared");
+                stErrors++;
+            }
+            type.allMethods.set(methodOffset, a);
+            methodOffset++;
+            visit(method);
+        }
+
+        classTable.put(n.id, virtualTable);
+        symTable.remove(nestingLevel--);
+
+        return null;
+    }
+
+    @Override
+    public Void visitNode(MethodNode n) {
+        nestingLevel++;
+        Map<String, STentry> hmn = new HashMap<>();
+        symTable.add(hmn);
+
+        int parOffset = 1;
+        for (ParNode par : n.parlist) {
+            if (hmn.put(par.id, new STentry(nestingLevel, par.getType(), parOffset++)) != null) {
+                System.out.println("Par id " + par.id + " at line " + n.getLine() + " already declared");
+                stErrors++;
+            }
+        }
+
+        final int prevNLDecOffset = decOffset;
+        decOffset = -2;
+        for (Node dec : n.declist) visit(dec);
+        visit(n.exp);
+
+        symTable.remove(nestingLevel--);
+        decOffset = prevNLDecOffset;
+        return null;
+    }
+
+    @Override
+    public Void visitNode(ClassCallNode n) {
+        if (print) printNode(n);
+        STentry entry = stLookup(n.objId);
+        if (entry == null) {
+            System.out.println("Var with id " + n.objId + " at line " + n.getLine() + " is not declared");
+            stErrors++;
+        } else {
+            n.entry = entry;
+            n.nl = nestingLevel;
+            if (!(n.entry.type instanceof RefTypeNode type)) {
+                System.out.println("Var with id " + n.objId + " at line " + n.getLine() + " must be an object");
+                stErrors++;
+            } else {
+                Map<String, STentry> virtualTable = classTable.get(type.id);
+                if (virtualTable == null) {
+                    System.out.println("Object " + n.objId + "'s class " + type.id + " is not declared");
+                    stErrors++;
+                } else {
+                    n.methodEntry = virtualTable.get(n.methodId);
+                }
+            }
         }
         return null;
     }

@@ -262,7 +262,7 @@ public class AST {
         final Node left;
         final Node right;
 
-        GreaterEqualNode(Node l, Node r){
+        GreaterEqualNode(Node l, Node r) {
             left = l;
             right = r;
         }
@@ -277,7 +277,7 @@ public class AST {
         final Node left;
         final Node right;
 
-        LessEqualNode(Node l, Node r){
+        LessEqualNode(Node l, Node r) {
             left = l;
             right = r;
         }
@@ -291,7 +291,7 @@ public class AST {
     public static class NotNode extends Node {
         final Node node;
 
-        NotNode(Node n){
+        NotNode(Node n) {
             node = n;
         }
 
@@ -320,7 +320,7 @@ public class AST {
         final Node left;
         final Node right;
 
-        OrNode(Node l, Node r){
+        OrNode(Node l, Node r) {
             left = l;
             right = r;
         }
@@ -351,7 +351,7 @@ public class AST {
         final Node left;
         final Node right;
 
-        AndNode(Node l, Node r){
+        AndNode(Node l, Node r) {
             left = l;
             right = r;
         }
@@ -402,6 +402,7 @@ public class AST {
         final List<ParNode> parlist;
         final List<DecNode> declist;
         final Node exp;
+        int offset;
 
         MethodNode(String i, TypeNode rt, List<ParNode> pl, List<DecNode> dl, Node e) {
             id = i;
