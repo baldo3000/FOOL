@@ -4,6 +4,9 @@ import compiler.AST.*;
 import compiler.lib.*;
 import compiler.exc.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static compiler.lib.FOOLlib.*;
 
 public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidException> {
@@ -14,6 +17,33 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     CodeGenerationASTVisitor(boolean debug) {
         super(false, debug);
     } //enables print for debugging
+
+    private String incrementHp(Integer amount) {
+        return nlJoin(
+                "lhp",
+                "push " + amount.toString(),
+                "add",
+                "shp"
+        );
+    }
+
+    private String pushHeap(Integer value) {
+        return nlJoin(
+                "lhp",
+                "push " + value.toString(),
+                "sw",
+                incrementHp(1)
+        );
+    }
+
+    private String pushHeap(String value) {
+        return nlJoin(
+                "lhp",
+                "push " + value,
+                "sw",
+                incrementHp(1)
+        );
+    }
 
     @Override
     public String visitNode(ProgLetInNode n) {
@@ -181,5 +211,68 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     public String visitNode(IntNode n) {
         if (print) printNode(n, n.val.toString());
         return "push " + n.val;
+    }
+
+    // OBJECT-ORIENTED
+
+    @Override
+    public String visitNode(ClassNode n) {
+        System.out.println(n.methods.size());
+        String[] dispatchTable = new String[n.methods.size()];
+        for (MethodNode method : n.methods) {
+            visit(method);
+            dispatchTable[method.offset] = method.label;
+        }
+        String code = "lhp";
+        for (String s : dispatchTable) {
+            code = nlJoin(code, pushHeap(s));
+        }
+        return code;
+    }
+
+    @Override
+    public String visitNode(MethodNode n) {
+        if (print) printNode(n);
+        n.label = freshFunLabel();
+        String declCode = null, popDecl = null, popParl = null;
+        for (Node dec : n.declist) {
+            declCode = nlJoin(declCode, visit(dec));
+            popDecl = nlJoin(popDecl, "pop");
+        }
+        for (int i = 0; i < n.parlist.size(); i++) popParl = nlJoin(popParl, "pop");
+        putCode(
+                nlJoin(
+                        n.label + ":",
+                        "cfp", // set $fp to $sp value
+                        "lra", // load $ra value
+                        declCode, // generate code for local declarations (they use the new $fp!!!)
+                        visit(n.exp), // generate code for function body expression
+                        "stm", // set $tm to popped value (function result)
+                        popDecl, // remove local declarations from stack
+                        "sra", // set $ra to popped value
+                        "pop", // remove Access Link from stack
+                        popParl, // remove parameters from stack
+                        "sfp", // set $fp to popped value (Control Link)
+                        "ltm", // load $tm value (function result)
+                        "lra", // load $ra value
+                        "js"  // jump to to popped address
+                )
+        );
+        return null;
+    }
+
+    @Override
+    public String visitNode(EmptyNode n) {
+        return "";
+    }
+
+    @Override
+    public String visitNode(ClassCallNode n) {
+        return "";
+    }
+
+    @Override
+    public String visitNode(NewNode n) {
+        return "";
     }
 }

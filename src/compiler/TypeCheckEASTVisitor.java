@@ -136,7 +136,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
         TypeNode t = visit(n.entry);
         if (t instanceof ArrowTypeNode)
             throw new TypeException("Wrong usage of function identifier " + n.id, n.getLine());
-        if (t instanceof ClassTypeNode){
+        if (t instanceof ClassTypeNode) {
             throw new TypeException("Variable " + n.id + " must not be a class", n.getLine());
         }
         return t;
@@ -159,7 +159,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     @Override
     public TypeNode visitNode(ClassNode n) throws TypeException {
         if (print) printNode(n);
-        for(MethodNode method : n.methods) visit(method);
+        for (MethodNode method : n.methods) visit(method);
         return null;
     }
 
@@ -180,7 +180,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 
     @Override
     public TypeNode visitNode(ClassCallNode n) throws TypeException {
-        if (print) printNode(n, n.objId+"."+n.methodId);
+        if (print) printNode(n, n.objId + "." + n.methodId);
         TypeNode t = visit(n.methodEntry);
         if (!(t instanceof ArrowTypeNode at))
             throw new TypeException("Invocation of a non-method " + n.methodId, n.getLine());
@@ -193,7 +193,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     }
 
     @Override
-    public TypeNode visitNode(EmptyNode n){
+    public TypeNode visitNode(EmptyNode n) {
         return new EmptyTypeNode();
     }
 
