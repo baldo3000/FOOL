@@ -11,6 +11,6 @@ let
     }
 
     var obj:A = new A(false, 5);
-    var nullable:int = null;
+    var nullable:A = null;
 in
     obj.puppa();
