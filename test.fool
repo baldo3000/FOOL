@@ -1,5 +1,8 @@
 let
     class A (a:bool, x:int){
+        fun puppa:int()
+            x;
+
         fun sub:int(b:bool)
             let
                 var h:int = 10;
@@ -10,4 +13,4 @@ let
     var obj:A = new A(false, 5);
     var nullable:int = null;
 in
-    obj.sub(false);
+    obj.puppa();

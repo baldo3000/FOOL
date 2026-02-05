@@ -110,7 +110,6 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         if (print) printVarAndProdName(c);
         Node n = null;
         if (c.ID() != null) { //non-incomplete ST
-            System.out.println("tipo"+((TypeNode)visit(c.type())));
             n = new VarNode(c.ID().getText(), (TypeNode) visit(c.type()), visit(c.exp()));
             n.setLine(c.VAR().getSymbol().getLine());
         }
@@ -146,6 +145,12 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     public Node visitBoolType(BoolTypeContext c) {
         if (print) printVarAndProdName(c);
         return new BoolTypeNode();
+    }
+
+    @Override
+    public Node visitIdType(IdTypeContext c){
+        if (print) printVarAndProdName(c);
+        return new RefTypeNode(c.ID().getText());
     }
 
     @Override
