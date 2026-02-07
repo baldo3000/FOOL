@@ -127,6 +127,22 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     }
 
     @Override
+    public Void visitNode(LessEqualNode n) {
+        if (print) printNode(n);
+        visit(n.left);
+        visit(n.right);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(GreaterEqualNode n) {
+        if (print) printNode(n);
+        visit(n.left);
+        visit(n.right);
+        return null;
+    }
+
+    @Override
     public Void visitNode(TimesNode n) {
         if (print) printNode(n);
         visit(n.left);
@@ -135,10 +151,50 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     }
 
     @Override
+    public Void visitNode(DivNode n) {
+        if (print) printNode(n);
+        visit(n.left);
+        visit(n.right);
+        return null;
+    }
+
+
+    @Override
     public Void visitNode(PlusNode n) {
         if (print) printNode(n);
         visit(n.left);
         visit(n.right);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(MinusNode n) {
+        if (print) printNode(n);
+        visit(n.left);
+        visit(n.right);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(OrNode n) {
+        if (print) printNode(n);
+        visit(n.left);
+        visit(n.right);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(AndNode n) {
+        if (print) printNode(n);
+        visit(n.left);
+        visit(n.right);
+        return null;
+    }
+
+    @Override
+    public Void visitNode(NotNode n){
+        if (print) printNode(n);
+        visit(n.node);
         return null;
     }
 

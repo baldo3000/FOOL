@@ -14,7 +14,7 @@ import visualsvm.*;
 public class Test {
     public static void main(String[] args) throws Exception {
 
-        String fileName = "test.fool";
+        String fileName = "quicksort.fool";
 
         CharStream chars = CharStreams.fromFileName(fileName);
         FOOLLexer lexer = new FOOLLexer(chars);
@@ -79,7 +79,7 @@ public class Test {
 
         System.out.println("Running generated code via Stack Virtual Machine.");
 //        ExecuteVM vm = new ExecuteVM(parserASM.code);
-        ExecuteVVM vm = new ExecuteVVM(parserASM.code, parserASM.sourceMap, Files.readAllLines(Paths.get(fileName+".asm")));
+        ExecuteVVM vm = new ExecuteVVM(parserASM.code, parserASM.sourceMap, Files.readAllLines(Paths.get(fileName + ".asm")));
         vm.cpu();
 
     }

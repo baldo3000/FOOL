@@ -65,43 +65,77 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         return new ProgNode(visit(c.exp()));
     }
 
-    // TODO: add code
     @Override
     public Node visitNot(NotContext c) {
         if (print) printVarAndProdName(c);
-        return null;
+        return new NotNode(visit(c.exp()));
     }
 
-    // TODO: add code
     @Override
     public Node visitAndOr(AndOrContext c) {
-        return null;
+        if (print) printVarAndProdName(c);
+        Node l = visit(c.exp(0));
+        Node r = visit(c.exp(1));
+        Node n;
+        if (c.AND() != null) {
+            n = new AndNode(l, r);
+            n.setLine(c.AND().getSymbol().getLine());
+        } else {
+            n = new OrNode(l, r);
+            n.setLine(c.OR().getSymbol().getLine());
+        }
+        System.out.println(n);
+        return n;
     }
 
-    // TODO: provided version is for Times only, add code for Div, see lab06 CalcSTVisititor to know how to differentiate operators
     @Override
     public Node visitTimesDiv(TimesDivContext c) {
         if (print) printVarAndProdName(c);
-        Node n = new TimesNode(visit(c.exp(0)), visit(c.exp(1)));
-        n.setLine(c.TIMES().getSymbol().getLine());        // setLine added
+        Node l = visit(c.exp(0));
+        Node r = visit(c.exp(1));
+        Node n;
+        if (c.TIMES() != null) {
+            n = new TimesNode(l, r);
+            n.setLine(c.TIMES().getSymbol().getLine());
+        } else {
+            n = new DivNode(l, r);
+            n.setLine(c.DIV().getSymbol().getLine());
+        }
         return n;
     }
 
-    // TODO: provided version is for Plus only, add code for Minus, see lab06 CalcSTVisititor to know how to differentiate operators
     @Override
     public Node visitPlusMinus(PlusMinusContext c) {
         if (print) printVarAndProdName(c);
-        Node n = new PlusNode(visit(c.exp(0)), visit(c.exp(1)));
-        n.setLine(c.PLUS().getSymbol().getLine());
+        Node l = visit(c.exp(0));
+        Node r = visit(c.exp(1));
+        Node n;
+        if (c.PLUS() != null) {
+            n = new PlusNode(l, r);
+            n.setLine(c.PLUS().getSymbol().getLine());
+        } else {
+            n = new MinusNode(l, r);
+            n.setLine(c.MINUS().getSymbol().getLine());
+        }
         return n;
     }
 
-    // TODO: provided version is for Eq only , add code for Ge and Le, see lab06 CalcSTVisititor to know how to differentiate operators
     @Override
     public Node visitComp(CompContext c) {
         if (print) printVarAndProdName(c);
-        Node n = new EqualNode(visit(c.exp(0)), visit(c.exp(1)));
-        n.setLine(c.EQ().getSymbol().getLine());
+        Node l = visit(c.exp(0));
+        Node r = visit(c.exp(1));
+        Node n;
+        if (c.EQ() != null) {
+            n = new EqualNode(l, r);
+            n.setLine(c.EQ().getSymbol().getLine());
+        } else if (c.GE() != null) {
+            n = new GreaterEqualNode(l, r);
+            n.setLine(c.GE().getSymbol().getLine());
+        } else {
+            n = new LessEqualNode(l, r);
+            n.setLine(c.LE().getSymbol().getLine());
+        }
         return n;
     }
 
@@ -148,7 +182,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitIdType(IdTypeContext c){
+    public Node visitIdType(IdTypeContext c) {
         if (print) printVarAndProdName(c);
         return new RefTypeNode(c.ID().getText());
     }

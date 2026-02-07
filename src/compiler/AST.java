@@ -269,7 +269,7 @@ public class AST {
 
         @Override
         public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
-            return null;
+            return visitor.visitNode(this);
         }
     }
 
@@ -284,7 +284,7 @@ public class AST {
 
         @Override
         public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
-            return null;
+            return visitor.visitNode(this);
         }
     }
 
@@ -297,7 +297,7 @@ public class AST {
 
         @Override
         public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
-            return null;
+            return visitor.visitNode(this);
         }
     }
 
@@ -312,7 +312,7 @@ public class AST {
 
         @Override
         public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
-            return null;
+            return visitor.visitNode(this);
         }
     }
 
@@ -327,7 +327,7 @@ public class AST {
 
         @Override
         public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
-            return null;
+            return visitor.visitNode(this);
         }
     }
 
@@ -343,7 +343,7 @@ public class AST {
 
         @Override
         public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
-            return null;
+            return visitor.visitNode(this);
         }
     }
 
@@ -358,7 +358,7 @@ public class AST {
 
         @Override
         public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
-            return null;
+            return visitor.visitNode(this);
         }
     }
 
