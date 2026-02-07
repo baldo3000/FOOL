@@ -1,9 +1,14 @@
 let
-    class A (x:int){
+    class B (h:int){
         fun puppa:int()
-            x;
+            h;
+        }
+    class A (){
+        fun nonloso:B()
+            new B(3);
     }
 
-    var obj:A = new A(5);
+    var obj:A = new A();
+    var tmp:B = obj.nonloso();
 in
-    print(obj.puppa());
+    print(tmp.puppa());
