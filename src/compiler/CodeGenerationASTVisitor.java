@@ -285,6 +285,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 "ltm", // load Access Link (pointer to frame of function "id" object)
                 "ltm", // duplicate top of stack
                 "push " + n.entry.offset, "add", // compute address of class dispatch table
+                "lw", // load address of object
                 "lw", // load address of dispatch table
                 "push " + n.methodEntry.offset, "add", // compute address of method
                 "lw", // load address of method from dispatch table
@@ -312,6 +313,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         }
         code = nlJoin(code,
                 "push " + n.entry.offset, "add", // dispatch pointer
+                "lw",
                 "lhp",
                 "sw", // mem[hp] = dispatch table pointer
                 "lhp",

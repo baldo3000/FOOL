@@ -217,6 +217,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
         classTable.put(n.id, virtualTable);
         symTable.remove(nestingLevel--);
+        decOffset--;
 
         return null;
     }
