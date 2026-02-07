@@ -325,6 +325,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
                 }
             }
         }
+        for (Node arg : n.arglist) visit(arg);
         return null;
     }
 
@@ -343,6 +344,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
             n.entry = entry;
             n.nl = nestingLevel;
         }
+        for (Node arg : n.arglist) visit(arg);
         return null;
     }
 
