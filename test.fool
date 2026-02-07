@@ -1,16 +1,9 @@
 let
-    class A (a:bool, x:int){
+    class A (x:int){
         fun puppa:int()
             x;
-
-        fun sub:int(b:bool)
-            let
-                var h:int = 10;
-            in
-                h;
     }
 
-    var obj:A = new A(false, 5);
-    var nullable:A = null;
+    var obj:A = new A(5);
 in
-    obj.puppa();
+    print(obj.puppa());
