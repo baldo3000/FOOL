@@ -144,14 +144,22 @@ public class ExecuteVVM {
                 codeLines.get(asmList.locationToIndex(e.getPoint())).switchBreakpoint();
                 asmList.repaint();
             }
+
             @Override
-            public void mousePressed(MouseEvent e) { }
+            public void mousePressed(MouseEvent e) {
+            }
+
             @Override
-            public void mouseReleased(MouseEvent e) { }
+            public void mouseReleased(MouseEvent e) {
+            }
+
             @Override
-            public void mouseEntered(MouseEvent e) { }
+            public void mouseEntered(MouseEvent e) {
+            }
+
             @Override
-            public void mouseExited(MouseEvent e) { }
+            public void mouseExited(MouseEvent e) {
+            }
         });
 
         this.asmScroll = new JScrollPane(this.asmList, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -196,10 +204,14 @@ public class ExecuteVVM {
                 ExecuteVVM.this.keyboardCommand += e.getKeyChar();
                 ExecuteVVM.this.checkKeyboardCommand();
             }
+
             @Override
-            public void keyReleased(KeyEvent e) {}
+            public void keyReleased(KeyEvent e) {
+            }
+
             @Override
-            public void keyPressed(KeyEvent e) {}
+            public void keyPressed(KeyEvent e) {
+            }
         });
 
         this.update();
@@ -247,11 +259,11 @@ public class ExecuteVVM {
                 nearlestBreakpoint = tempBreakpoint;
             }
 
-            if (tempBreakpoint + 1  == this.debugLineCode) {
+            if (tempBreakpoint + 1 == this.debugLineCode) {
                 break;
             }
         }
-        this.debugLineCode = nearlestBreakpoint+1;
+        this.debugLineCode = nearlestBreakpoint + 1;
         this.backStepButtonHandler();
 
     }
@@ -520,7 +532,9 @@ public class ExecuteVVM {
 interface CodeLine {
 
     Optional<Boolean> hasBreakpoint();
+
     void switchBreakpoint();
+
     String getInstruction();
 
     static CodeLine simpleLine(String instruction) {
@@ -529,8 +543,10 @@ interface CodeLine {
             public Optional<Boolean> hasBreakpoint() {
                 return Optional.empty();
             }
+
             @Override
-            public void switchBreakpoint() { }
+            public void switchBreakpoint() {
+            }
 
             @Override
             public String getInstruction() {

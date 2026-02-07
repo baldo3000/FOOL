@@ -47,12 +47,23 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         );
     }
 
+    private String saveMEMSIZE() {
+        return nlJoin(
+                "lfp",
+                "lhp",
+                "sw",
+                incrementHp(1)
+        );
+    }
+
     @Override
     public String visitNode(ProgLetInNode n) {
         if (print) printNode(n);
         String declCode = null;
         for (Node dec : n.declist) declCode = nlJoin(declCode, visit(dec));
         return nlJoin(
+                saveMEMSIZE(),
+
                 "push 0",
                 declCode, // generate code for declarations (allocation)
                 visit(n.exp),
@@ -65,6 +76,8 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     public String visitNode(ProgNode n) {
         if (print) printNode(n);
         return nlJoin(
+                saveMEMSIZE(),
+
                 visit(n.exp),
                 "halt"
         );
@@ -288,7 +301,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 "push " + n.entry.offset, "add", // compute address of "id" declaration
                 "lw" // load address of "id" function
         );
-        if(n.entry.offset >= 0){ // method call from a method
+        if (n.entry.offset >= 0) { // method call from a method
             code = nlJoin(code, "lw");
         }
         code = nlJoin(code,
@@ -403,21 +416,18 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     public String visitNode(NewNode n) {
         if (print) printNode(n);
         String code = "";
-        for (int i = n.arglist.size() - 1; i >= 0; i--){
+        for (int i = n.arglist.size() - 1; i >= 0; i--) {
             code = nlJoin(code,
                     visit(n.arglist.get(i)),
                     "lhp",
                     "sw", // mem[hp] = sw
                     incrementHp(1)
-                    );
-        }
-        code = nlJoin(code, "lfp");
-        for(int l = n.nl; l > 0; l--){
-            code = nlJoin(code,
-                    "lw"
-            ); // risaliamo fino all'AR dell'ambiente globale
+            );
         }
         code = nlJoin(code,
+                "push 0",
+                "lw", // load value of MEMSIZE into stack
+
                 "push " + n.entry.offset, "add", // dispatch pointer
                 "lw",
                 "lhp",

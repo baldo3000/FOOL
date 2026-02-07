@@ -1,6 +1,6 @@
 let
     class B (h:int){
-        fun puppa:int()
+        fun boh:int()
             h;
         }
     class A (){
@@ -11,4 +11,4 @@ let
     var obj:A = new A();
     var tmp:B = obj.nonloso();
 in
-    print(tmp.puppa());
+    print(tmp.boh());

@@ -192,7 +192,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     }
 
     @Override
-    public Void visitNode(NotNode n){
+    public Void visitNode(NotNode n) {
         if (print) printNode(n);
         visit(n.node);
         return null;
@@ -330,15 +330,15 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     }
 
     @Override
-    public Void visitNode(NewNode n){
+    public Void visitNode(NewNode n) {
         if (print) printNode(n);
         STentry entry = symTable.getFirst().get(n.id);
         Map<String, STentry> virtualTable = classTable.get(n.id);
-        if(entry == null){
-            System.out.println("Class "+n.id+" at line "+n.getLine()+" is not declared");
+        if (entry == null) {
+            System.out.println("Class " + n.id + " at line " + n.getLine() + " is not declared");
             stErrors++;
-        } else if(virtualTable == null){
-            System.out.println("Variable "+n.id+" at line "+n.getLine()+" must be a class");
+        } else if (virtualTable == null) {
+            System.out.println("Variable " + n.id + " at line " + n.getLine() + " must be a class");
             stErrors++;
         } else {
             n.entry = entry;
@@ -349,8 +349,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     }
 
     @Override
-    public Void visitNode(EmptyNode n){
-        if(print) printNode(n);
+    public Void visitNode(EmptyNode n) {
+        if (print) printNode(n);
         return null;
     }
 

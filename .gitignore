@@ -32,3 +32,4 @@ bin/
 ### FOOL ###
 FOOL.iml
 gen/
+*.asm
