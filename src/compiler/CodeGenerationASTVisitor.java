@@ -281,12 +281,16 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 argCode, // generate code for argument expressions in reversed order
                 "lfp", getAR, // retrieve address of frame containing "id" declaration
                 // by following the static chain (of Access Links)
+
+                "push " + n.entry.offset, "add", // calculate position of object pointer in AR
+                "lw", // load object pointer
+
                 "stm", // set $tm to popped value (with the aim of duplicating top of stack)
                 "ltm", // load Access Link (pointer to frame of function "id" object)
                 "ltm", // duplicate top of stack
-                "push " + n.entry.offset, "add", // compute address of class dispatch table
-                "lw", // load address of object
+
                 "lw", // load address of dispatch table
+
                 "push " + n.methodEntry.offset, "add", // compute address of method
                 "lw", // load address of method from dispatch table
                 "js"  // jump to popped address (saving address of subsequent instruction in $ra)
@@ -315,7 +319,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 "push " + n.entry.offset, "add", // dispatch pointer
                 "lw",
                 "lhp",
-                "sw", // mem[hp] = dispatch table pointer
+                "sw",
                 "lhp",
                 incrementHp(1)
         );
