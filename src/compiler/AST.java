@@ -368,12 +368,14 @@ public class AST {
         final List<FieldNode> fields;
         final List<MethodNode> methods;
         final String id;
+        final String superId;
 
-        ClassNode(String i, TypeNode t, List<FieldNode> f, List<MethodNode> m) {
+        ClassNode(String i, TypeNode t, List<FieldNode> f, List<MethodNode> m, String sId) {
             id = i;
             type = t;
             fields = Collections.unmodifiableList(f);
             methods = Collections.unmodifiableList(m);
+            superId = sId;
         }
 
         @Override

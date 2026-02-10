@@ -1,14 +1,10 @@
 let
-    class B (h:int){
-        fun boh:int()
-            h;
-        }
-    class A (){
-        fun nonloso:B()
-            new B(3);
+    class A (a:int){
+    }
+    class B extends A (a:bool){
     }
 
-    var obj:A = new A();
-    var tmp:B = obj.nonloso();
+    var obj1:A = new A(5);
+    var obj2:B = new B(true);
 in
-    print(tmp.boh());
+    1;

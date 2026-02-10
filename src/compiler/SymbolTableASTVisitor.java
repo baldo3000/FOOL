@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static compiler.TypeRels.isSubtype;
+
 
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
@@ -244,19 +246,45 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
         Map<String, STentry> virtualTable = new HashMap<>();
 
+        if (n.superId != null) {
+            Map<String, STentry> parentVirtualTable = classTable.get(n.superId);
+            virtualTable.putAll(parentVirtualTable);
+
+            STentry parentEntry = symTable.getFirst().get(n.superId);
+            if (!(parentEntry.type instanceof ClassTypeNode parentType)) {
+                System.out.println("Parent class " + n.superId + " at line " + n.getLine() + " must be a class.");
+                stErrors++;
+            } else {
+                type.allFields.addAll(parentType.allFields);
+                type.allMethods.addAll(parentType.allMethods);
+            }
+        }
+
         nestingLevel++;
         symTable.add(virtualTable);
-        int fieldOffset = -1;
-        int methodOffset = 0;
+        int fieldOffset = -type.allFields.size() - 1;
+        int methodOffset = type.allMethods.size();
 
         for (FieldNode field : n.fields) {
             // TODO: forse qui va messo field.offset = fieldOffset;
-            if (virtualTable.put(field.id, new STentry(nestingLevel, field.getType(), fieldOffset)) != null) {
-                System.out.println("Field " + n.id + " at line " + n.getLine() + " already declared");
-                stErrors++;
+            if (virtualTable.containsKey(field.id)) {
+                if (isSubtype(field.getType(), virtualTable.get(field.id).type)) {
+                    STentry oldEntry = virtualTable.get(field.id);
+                    STentry freshEntry = new STentry(oldEntry.nl, field.getType(), oldEntry.offset);
+
+                    int index = type.allFields.indexOf(virtualTable.get(field.id).type); // indice del campo nella classe padre
+                    type.allFields.set(index, field.getType());
+
+                    virtualTable.put(field.id, freshEntry); // rimpiazziamo la st entry con il tipo aggiornato
+                } else {
+                    System.out.println("Field " + field.id + " must be overrided with a subtype");
+                    stErrors++;
+                }
+            } else {
+                virtualTable.put(field.id, new STentry(nestingLevel, field.getType(), fieldOffset));
+                type.allFields.add(field.getType());
+                fieldOffset--;
             }
-            type.allFields.add(field.getType());
-            fieldOffset--;
         }
 
         for (MethodNode method : n.methods) {
