@@ -1,7 +1,9 @@
 let
     class A (a:int){
+        fun m:int (x:int, y:int) {}
     }
-    class B extends A (a:bool){
+    class B extends A (a:bool, m:int){
+        fun m:int (x:bool, y:bool) {}
     }
 
     var obj1:A = new A(5);

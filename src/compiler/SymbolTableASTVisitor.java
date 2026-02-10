@@ -290,10 +290,13 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         for (MethodNode method : n.methods) {
             ArrowTypeNode a = new ArrowTypeNode(method.parlist.stream().map(DecNode::getType).toList(), method.retType);
             method.offset = methodOffset; // TODO: non si sa a cosa serva
-            if (virtualTable.put(method.id, new STentry(nestingLevel, a, methodOffset)) != null) {
-                System.out.println("Method " + n.id + " at line " + n.getLine() + " already declared");
-                stErrors++;
-            }
+
+            if (virtualTable.containsKey(method.id))
+
+                if (virtualTable.put(method.id, new STentry(nestingLevel, a, methodOffset)) != null) {
+                    System.out.println("Method " + n.id + " at line " + n.getLine() + " already declared");
+                    stErrors++;
+                }
             type.allMethods.add(a);
             methodOffset++;
             visit(method);
