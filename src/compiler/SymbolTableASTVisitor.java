@@ -257,6 +257,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
             } else {
                 type.allFields.addAll(parentType.allFields);
                 type.allMethods.addAll(parentType.allMethods);
+                n.superEntry = parentEntry;
             }
         }
 
@@ -291,14 +292,24 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
             ArrowTypeNode a = new ArrowTypeNode(method.parlist.stream().map(DecNode::getType).toList(), method.retType);
             method.offset = methodOffset; // TODO: non si sa a cosa serva
 
-            if (virtualTable.containsKey(method.id))
+            if (virtualTable.containsKey(method.id)) {
+                if (isSubtype(a, virtualTable.get(method.id).type)) {
+                    STentry oldEntry = virtualTable.get(method.id);
+                    STentry freshEntry = new STentry(oldEntry.nl, a, oldEntry.offset);
 
-                if (virtualTable.put(method.id, new STentry(nestingLevel, a, methodOffset)) != null) {
-                    System.out.println("Method " + n.id + " at line " + n.getLine() + " already declared");
+                    int index = type.allMethods.indexOf((ArrowTypeNode) virtualTable.get(method.id).type); // indice del metodo nella classe padre
+                    type.allMethods.set(index, a);
+
+                    virtualTable.put(method.id, freshEntry); // rimpiazziamo la st entry con il tipo aggiornato
+                } else {
+                    System.out.println("Method " + method.id + " must be overrided with a subtype");
                     stErrors++;
                 }
-            type.allMethods.add(a);
-            methodOffset++;
+            } else {
+                virtualTable.put(method.id, new STentry(nestingLevel, a, fieldOffset));
+                type.allMethods.add(a);
+                methodOffset++;
+            }
             visit(method);
         }
 

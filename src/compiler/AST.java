@@ -369,6 +369,7 @@ public class AST {
         final List<MethodNode> methods;
         final String id;
         final String superId;
+        STentry superEntry;
 
         ClassNode(String i, TypeNode t, List<FieldNode> f, List<MethodNode> m, String sId) {
             id = i;

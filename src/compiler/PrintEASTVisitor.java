@@ -207,6 +207,7 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void, VoidException> {
     public Void visitNode(ClassNode n) {
         printNode(n, n.id + (n.superId == null ? "" : " extends " + n.superId));
         visit(n.getType());
+        visit(n.superEntry);
         for (FieldNode field : n.fields) visit(field);
         for (MethodNode method : n.methods) visit(method);
         return null;
