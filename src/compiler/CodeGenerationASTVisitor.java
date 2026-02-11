@@ -1,8 +1,9 @@
 package compiler;
 
 import compiler.AST.*;
-import compiler.lib.*;
-import compiler.exc.*;
+import compiler.exc.VoidException;
+import compiler.lib.BaseASTVisitor;
+import compiler.lib.Node;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -339,8 +340,19 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
     @Override
     public String visitNode(ClassNode n) {
-        System.out.println(n.methods.size());
-        List<String> dispatchTable = n.methods.stream().peek(this::visit).map(method -> method.label).toList();
+        List<String> dispatchTable = new ArrayList<>();
+        if (n.superEntry != null) {
+            dispatchTable.addAll(dispatchTables.get(-n.superEntry.offset - 2));
+        }
+        for (int i = 0; i < n.methods.size(); i++) {
+            visitNode(n.methods.get(i));
+            int offset = n.methods.get(i).offset;
+            if (offset < dispatchTable.size()) {
+                dispatchTable.set(offset, n.methods.get(i).label);
+            } else {
+                dispatchTable.add(n.methods.get(i).label);
+            }
+        }
         dispatchTables.add(dispatchTable);
         String code = "lhp";
         for (String s : dispatchTable) {

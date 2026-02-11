@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static compiler.TypeRels.isSubtype;
-
 
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
@@ -267,20 +265,14 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         int methodOffset = type.allMethods.size();
 
         for (FieldNode field : n.fields) {
-            // TODO: forse qui va messo field.offset = fieldOffset;
             if (virtualTable.containsKey(field.id)) {
-                if (isSubtype(field.getType(), virtualTable.get(field.id).type)) {
-                    STentry oldEntry = virtualTable.get(field.id);
-                    STentry freshEntry = new STentry(oldEntry.nl, field.getType(), oldEntry.offset);
+                STentry oldEntry = virtualTable.get(field.id);
+                STentry freshEntry = new STentry(oldEntry.nl, field.getType(), oldEntry.offset);
 
-                    int index = type.allFields.indexOf(virtualTable.get(field.id).type); // indice del campo nella classe padre
-                    type.allFields.set(index, field.getType());
+                int index = type.allFields.indexOf(virtualTable.get(field.id).type); // indice del campo nella classe padre
+                type.allFields.set(index, field.getType());
 
-                    virtualTable.put(field.id, freshEntry); // rimpiazziamo la st entry con il tipo aggiornato
-                } else {
-                    System.out.println("Field " + field.id + " must be overrided with a subtype");
-                    stErrors++;
-                }
+                virtualTable.put(field.id, freshEntry); // rimpiazziamo la st entry con il tipo aggiornato
             } else {
                 virtualTable.put(field.id, new STentry(nestingLevel, field.getType(), fieldOffset));
                 type.allFields.add(field.getType());
@@ -290,7 +282,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
         for (MethodNode method : n.methods) {
             ArrowTypeNode a = new ArrowTypeNode(method.parlist.stream().map(DecNode::getType).toList(), method.retType);
-            method.offset = methodOffset; // TODO: non si sa a cosa serva
 
             if (virtualTable.containsKey(method.id)) {
                 STentry oldEntry = virtualTable.get(method.id);
@@ -298,12 +289,13 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
                 int index = type.allMethods.indexOf((ArrowTypeNode) virtualTable.get(method.id).type); // indice del metodo nella classe padre
                 type.allMethods.set(index, a);
+                method.offset = index;
 
                 virtualTable.put(method.id, freshEntry); // rimpiazziamo la st entry con il tipo aggiornato
             } else {
                 virtualTable.put(method.id, new STentry(nestingLevel, a, methodOffset));
                 type.allMethods.add(a);
-                methodOffset++;
+                method.offset = methodOffset++;
             }
             visit(method);
         }

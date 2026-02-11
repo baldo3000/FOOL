@@ -1,14 +1,14 @@
 let
     class A (a:int) {
         fun m:int (x:int, y:bool)
-            1;
+            x + y + a;
     }
     class B extends A (a:bool, b:int) {
-        fun m:bool (x:int, y:int)
-            false;
+        fun m:int (x:int, y:int)
+            x + y + b + a;
     }
 
     var obj1:A = new A(5);
-    var obj2:B = new B(true);
+    var obj2:B = new B(true, 18);
 in
-    1;
+    print(obj2.m(1, 5));
