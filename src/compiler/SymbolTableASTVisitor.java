@@ -232,7 +232,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     @Override
     public Void visitNode(ClassNode n) {
         if (print) printNode(n);
-        ClassTypeNode type = new ClassTypeNode();
+        ClassTypeNode type = (ClassTypeNode) n.getType();
         STentry entry = new STentry(nestingLevel, type, classOffset--);
         if (nestingLevel != 0) {
             System.out.println("Class id " + n.id + " at line " + n.getLine() + " must be declared at nesting level 0");
@@ -293,20 +293,15 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
             method.offset = methodOffset; // TODO: non si sa a cosa serva
 
             if (virtualTable.containsKey(method.id)) {
-                if (isSubtype(a, virtualTable.get(method.id).type)) {
-                    STentry oldEntry = virtualTable.get(method.id);
-                    STentry freshEntry = new STentry(oldEntry.nl, a, oldEntry.offset);
+                STentry oldEntry = virtualTable.get(method.id);
+                STentry freshEntry = new STentry(oldEntry.nl, a, oldEntry.offset);
 
-                    int index = type.allMethods.indexOf((ArrowTypeNode) virtualTable.get(method.id).type); // indice del metodo nella classe padre
-                    type.allMethods.set(index, a);
+                int index = type.allMethods.indexOf((ArrowTypeNode) virtualTable.get(method.id).type); // indice del metodo nella classe padre
+                type.allMethods.set(index, a);
 
-                    virtualTable.put(method.id, freshEntry); // rimpiazziamo la st entry con il tipo aggiornato
-                } else {
-                    System.out.println("Method " + method.id + " must be overrided with a subtype");
-                    stErrors++;
-                }
+                virtualTable.put(method.id, freshEntry); // rimpiazziamo la st entry con il tipo aggiornato
             } else {
-                virtualTable.put(method.id, new STentry(nestingLevel, a, fieldOffset));
+                virtualTable.put(method.id, new STentry(nestingLevel, a, methodOffset));
                 type.allMethods.add(a);
                 methodOffset++;
             }

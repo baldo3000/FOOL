@@ -266,7 +266,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         Node n = null;
         if (!c.ID().isEmpty()) {
             String superId = null;
-            if(c.EXTENDS() != null) superId = c.ID(1).getText();
+            if (c.EXTENDS() != null) superId = c.ID(1).getText();
             n = new ClassNode(c.ID(0).getText(), new ClassTypeNode(), fields, methods, superId);
             n.setLine(c.CLASS().getSymbol().getLine());
         }
