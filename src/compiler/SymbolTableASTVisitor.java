@@ -7,10 +7,7 @@ import compiler.lib.DecNode;
 import compiler.lib.Node;
 import compiler.lib.TypeNode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
@@ -232,6 +229,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         if (print) printNode(n);
         ClassTypeNode type = (ClassTypeNode) n.getType();
         STentry entry = new STentry(nestingLevel, type, classOffset--);
+        Set<String> declarations = new HashSet<>();
         if (nestingLevel != 0) {
             System.out.println("Class id " + n.id + " at line " + n.getLine() + " must be declared at nesting level 0");
             stErrors++;
@@ -265,22 +263,32 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         int methodOffset = type.allMethods.size();
 
         for (FieldNode field : n.fields) {
+            if(!declarations.add(field.id)){
+                System.out.println("Field "+field.id+" at line "+field.getLine()+" already declared");
+                stErrors++;
+            }
+
             if (virtualTable.containsKey(field.id)) {
                 STentry oldEntry = virtualTable.get(field.id);
                 STentry freshEntry = new STentry(oldEntry.nl, field.getType(), oldEntry.offset);
 
                 int index = type.allFields.indexOf(virtualTable.get(field.id).type); // indice del campo nella classe padre
                 type.allFields.set(index, field.getType());
+                field.offset = oldEntry.offset;
 
                 virtualTable.put(field.id, freshEntry); // rimpiazziamo la st entry con il tipo aggiornato
             } else {
                 virtualTable.put(field.id, new STentry(nestingLevel, field.getType(), fieldOffset));
                 type.allFields.add(field.getType());
-                fieldOffset--;
+                field.offset = fieldOffset--;
             }
         }
 
         for (MethodNode method : n.methods) {
+            if(!declarations.add(method.id)){
+                System.out.println("Method "+method.id+" at line "+method.getLine()+" already declared");
+                stErrors++;
+            }
             ArrowTypeNode a = new ArrowTypeNode(method.parlist.stream().map(DecNode::getType).toList(), method.retType);
 
             if (virtualTable.containsKey(method.id)) {
@@ -289,7 +297,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
                 int index = type.allMethods.indexOf((ArrowTypeNode) virtualTable.get(method.id).type); // indice del metodo nella classe padre
                 type.allMethods.set(index, a);
-                method.offset = index;
+                method.offset = oldEntry.offset;
 
                 virtualTable.put(method.id, freshEntry); // rimpiazziamo la st entry con il tipo aggiornato
             } else {

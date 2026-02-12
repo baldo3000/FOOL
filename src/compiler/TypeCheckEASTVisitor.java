@@ -226,17 +226,19 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
         if (n.superId != null && n.superEntry != null) {
             superType.put(n.id, n.superId);
 
-            ClassTypeNode superType = (ClassTypeNode) n.superEntry.type;
+            ClassTypeNode parentCT = (ClassTypeNode) n.superEntry.type;
             ClassTypeNode type = (ClassTypeNode) n.getType();
 
-            for (int i = 0; i < superType.allFields.size(); i++) {
-                if (!isSubtype(ckvisit(type.allFields.get(i)), ckvisit(superType.allFields.get(i))))
-                    throw new TypeException("Wrong override for field " + n.id, n.getLine());
+            for(FieldNode field : n.fields){
+                int i = -field.offset - 1;
+                if(i<parentCT.allFields.size() && !isSubtype(ckvisit(type.allFields.get(i)), ckvisit(parentCT.allFields.get(i))))
+                    throw new TypeException("Wrong override for field " + field.id, n.getLine());
             }
 
-            for (int i = 0; i < superType.allMethods.size(); i++) {
-                if (!isSubtype(ckvisit(type.allMethods.get(i)), ckvisit(superType.allMethods.get(i))))
-                    throw new TypeException("Wrong override for method " + n.id, n.getLine());
+            for(MethodNode method : n.methods){
+                int i = method.offset;
+                if(i<parentCT.allMethods.size() && !isSubtype(ckvisit(type.allMethods.get(i)), ckvisit(parentCT.allMethods.get(i))))
+                    throw new TypeException("Wrong override for method " + method.id, n.getLine());
             }
         }
 
