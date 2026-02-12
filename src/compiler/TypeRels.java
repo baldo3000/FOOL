@@ -5,6 +5,7 @@ import compiler.lib.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class TypeRels {
 
@@ -21,7 +22,31 @@ public class TypeRels {
             }
             return true;
         }
+        if(a instanceof RefTypeNode aa && b instanceof RefTypeNode bb){
+            String aaClass = aa.id;
+            while(aaClass != null && !aaClass.equals(bb.id))
+                aaClass = superType.get(aaClass);
+            return aaClass != null;
+        }
         return a.getClass().equals(b.getClass()) || ((a instanceof BoolTypeNode) && (b instanceof IntTypeNode));
+    }
+
+    public static TypeNode lowestCommonAncestor(TypeNode a, TypeNode b) {
+        if (a instanceof EmptyTypeNode) return b;
+        if (b instanceof EmptyTypeNode) return a;
+        if (a instanceof RefTypeNode aa && b instanceof RefTypeNode bb) {
+            while (true) {
+                if (isSubtype(bb, aa)) return aa;
+                String superId = superType.get(aa.id);
+                if (superId != null) aa = new RefTypeNode(superId);
+                else break;
+            }
+        }
+        if(isSubtype(a, new IntTypeNode()) && isSubtype(b, new IntTypeNode())){
+            if(a instanceof IntTypeNode || b instanceof IntTypeNode) return new IntTypeNode();
+            return new BoolTypeNode();
+        }
+        return null;
     }
 
 }

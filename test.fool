@@ -1,14 +1,55 @@
 let
-    class A (a:int) {
-        fun m:int (x:int, y:bool)
-            x + y + a;
+    class A (x:int) {
+        fun m:int ()
+            1*x;
     }
-    class B extends A (a:bool, b:int) {
-        fun m:int (x:int, y:int)
-            x + y + b + a;
+    class B extends A () {
+        fun m:int ()
+            2*x;
+    }
+    class C extends A (){
+        fun m:int ()
+            3*x;
+    }
+    class D extends B (){
+        fun m:int ()
+            4*x;
+    }
+    class E extends C (){
+        fun m:int ()
+            5*x;
     }
 
     var obj1:A = new A(5);
-    var obj2:B = new B(true, 18);
+    var obj2:B = new B(5);
+    var obj3:C = new C(5);
+
+    fun puppa:A (cosaritorno:int)
+        if (cosaritorno==1) then {
+            new A(1)
+        } else {
+            if (cosaritorno==2) then {
+                new B(1)
+            } else {
+                if(cosaritorno==3) then {
+                    new C(1)
+                } else {
+                    if(cosaritorno==4) then {
+                        new D(1)
+                    } else {
+                        if(cosaritorno==5) then {
+                            new E(1)
+                        } else {null}
+                    }
+                }
+            }
+        };
+
+    var obj4:A = puppa(0);
+    var obj5:A = puppa(1);
+    var obj6:A = puppa(2);
+    var obj7:A = puppa(3);
+    var obj8:A = puppa(4);
+    var obj9:A = puppa(5);
 in
-    print(obj2.m(1, 5));
+    print(obj9.m());
