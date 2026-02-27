@@ -1,1 +1,11 @@
-print(!false);
+let
+
+  class List (f:int, r:int) {
+    fun first:int() f;
+    fun rest:int() first() + 1;
+    fun sasso:int() rest();
+  }
+
+  var obj: List = new List(1, 5);
+  
+in print(obj.sasso());

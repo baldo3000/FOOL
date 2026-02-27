@@ -298,13 +298,15 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 // by following the static chain (of Access Links)
                 "stm", // set $tm to popped value (with the aim of duplicating top of stack)
                 "ltm", // load Access Link (pointer to frame of function "id" declaration)
-                "ltm", // duplicate top of stack
-                "push " + n.entry.offset, "add", // compute address of "id" declaration
-                "lw" // load address of "id" function
+                "ltm" // duplicate top of stack
         );
         if (n.entry.offset >= 0) { // method call from a method
             code = nlJoin(code, "lw");
         }
+        code = nlJoin(code,
+                "push " + n.entry.offset, "add", // compute address of "id" declaration
+                "lw" // load address of "id" function
+        );
         code = nlJoin(code,
                 "js"  // jump to popped address (saving address of subsequent instruction in $ra)
         );
